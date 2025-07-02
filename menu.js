@@ -162,28 +162,56 @@ const platosDisponibles = [menu['plato1'], menu['plato2'], menu['plato3']];
 let platosElegidos = [];
 let precioTotal = 0;
 
+//voy a añadiur una variable de cancelar pedido para salir del while si se cancela
+let cancelarPedido = false;
+
 // Uso prompt de nuevo para elegir los tres platos:
-while (platosElegidos.length < 3) {
+// Este while sigue activo hasta que se elijan los 3 platos o cancelarPedido sea true
+while (platosElegidos.length < 3 && !cancelarPedido) {
     for (let plato = 0; plato < platosDisponibles.length; plato++) {
         let preguntaPlato = prompt(`Escriba el plato que desea del menú de ${horario}: \n\n1. ${platosDisponibles[plato][0].nombre} -> ${platosDisponibles[plato][0].precio.toFixed(1)}€\n2. ${platosDisponibles[plato][1].nombre} -> ${platosDisponibles[plato][1].precio.toFixed(1)}€\n3. ${platosDisponibles[plato][2].nombre} -> ${platosDisponibles[plato][2].precio.toFixed(1)}€\n\n`);
-        
-        // Que sea valido aunque haya espacios y aunque haya mayusculas en cualquier parte (PENSAR: ALGUN OTRO POSIBLE ERROR? TILDES?)
-        preguntaPlato = preguntaPlato.trim();
-        preguntaPlato = preguntaPlato.toLowerCase();
 
         //verificar que el plato elegido existe en el menu, si no existe, volver a preguntar
         if (preguntaPlato !== null) {
 
-            const existePlato = platosDisponibles[plato].some(plato => plato.nombre.toLowerCase() === preguntaPlato);
+            // Que sea valido aunque haya espacios y aunque haya mayusculas en cualquier parte (PENSAR: ALGUN OTRO POSIBLE ERROR? TILDES?)
+            preguntaPlato = preguntaPlato.trim();
+            preguntaPlato = preguntaPlato.toLowerCase();
 
-            if (existePlato) {
-                const platoElegido = platosDisponibles[plato].find(plato => plato.nombre.toLowerCase() === preguntaPlato);
+            //busco el plato del usuario dentro de la lista de platos disponibles (que pongo en minusculas también por si acaso)
+            const platoElegido = platosDisponibles[plato].find(plato => plato.nombre.toLowerCase() === preguntaPlato);
+
+            if (platoElegido) {
                 platosElegidos.push(platoElegido);
                 precioTotal += platoElegido.precio;
+                //aqui meto la frase aleatoria como alerta
+                //math random da de 0 a 1 asi que multiplico por la cantidad de frases para tener el indice del 0 al 5 usando math.floor
+                //Como los indices son del 0 al 4 uso floor en vez de round para que no redondee nada fuera del rango y de error
+                alert(frasesMenu[Math.floor(Math.random() * frasesMenu.length)]);
             } else {
-                alert("Por favor, introduzca un plato disponible.");
+                alert("Por favor, introduzca un plato del menú.");
+                plato--; // para restar 1 al valor de plato y evitar que pida el siguiente plato cuando se ha metido mal
                 continue;
             }
+        } else {
+            // Si el usuario cancela, le pregunto a ver si lo quiere cancelar de verdad por si acaso se ha equivocado
+            const cancelar = confirm("¿Seguro que desea cancelar el pedido?");
+            if (cancelar) {
+                // le digo que ha sido cancelado y borro lo que había guardado si había elegido algo (por si acaso)
+                alert("El pedido ha sido cancelado.");
+                platosElegidos = [];
+                precioTotal = 0;
+                cancelarPedido = true; //aquí añado true y esto rompe el while y sale
+                break;
+
+            } else {
+                plato--; // si no pongo esto pasa al siguiente menu
+                continue;
+            }
+
         }
     }
 }
+
+// console.log(platosElegidos);
+// console.log(precioTotal);
