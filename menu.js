@@ -89,14 +89,14 @@ while (horario === undefined) {
 const tiposMenu = {
     'desayuno': {
         'plato1': [
-            { nombre: 'Cafe', precio: 1.9 },
+            { nombre: 'Agua', precio: 1.9 },
             { nombre: 'Leche', precio: 1.2 },
             { nombre: 'Chocolate', precio: 2.5 }
         ],
         'plato2': [
-            { nombre: 'Tostada de jamón iberico', precio: 5.0 },
+            { nombre: 'Tostada de tomate', precio: 5.0 },
             { nombre: 'Tortilla de patatas', precio: 2.0 },
-            { nombre: 'Huevos fritos con bacon', precio: 3.5 },
+            { nombre: 'Huevos con bacon', precio: 3.5 },
         ],
         'plato3': [
             { nombre: 'Tarta de manzana', precio: 4.2 },
@@ -106,40 +106,42 @@ const tiposMenu = {
     },
     'comida': {
         'plato1': [
-            { nombre: 'Degustación de croquetas', precio: 8.0 },
-            { nombre: 'Tabla de ibéricos', precio: 13.0 },
+            { nombre: 'Croquetas', precio: 8.0 },
+            { nombre: 'Tabla de quesos', precio: 13.0 },
             { nombre: 'Ensalada mixta', precio: 4.5 }
         ],
         'plato2': [
-            { nombre: 'Chipirones en su tinta', precio: 16.0 },
-            { nombre: 'Chuletillas de cordero', precio: 12.5 },
-            { nombre: 'Entrecot de ternera', precio: 19.0 },
+            { nombre: 'Chipirones', precio: 16.0 },
+            { nombre: 'Chuletillas', precio: 12.5 },
+            { nombre: 'Entrecot', precio: 19.0 },
         ],
         'plato3': [
-            { nombre: 'Natillas caseras', precio: 4.6 },
-            { nombre: 'Fruta de temporada', precio: 2.0 },
+            { nombre: 'Natillas', precio: 4.6 },
+            { nombre: 'Fruta', precio: 2.0 },
             { nombre: 'Tarta de queso', precio: 4.9 },
         ]
     },
+    //Cena igual que comida pero precios más altos
     'cena': {
         'plato1': [
-            { nombre: 'Degustación de croquetas', precio: 9.0 },
-            { nombre: 'Tabla de ibéricos', precio: 15.0 },
+            { nombre: 'Croquetas', precio: 9.0 },
+            { nombre: 'Tabla de quesos', precio: 15.0 },
             { nombre: 'Ensalada mixta', precio: 5.0 }
         ],
         'plato2': [
-            { nombre: 'Chipirones en su tinta', precio: 17.0 },
-            { nombre: 'Chuletillas de cordero', precio: 13.5 },
-            { nombre: 'Entrecot de ternera', precio: 20.5 },
+            { nombre: 'Chipirones', precio: 17.0 },
+            { nombre: 'Chuletillas', precio: 13.5 },
+            { nombre: 'Entrecot', precio: 20.5 },
         ],
         'plato3': [
-            { nombre: 'Natillas caseras', precio: 5.5 },
-            { nombre: 'Fruta de temporada', precio: 2.5 },
+            { nombre: 'Natillas', precio: 5.5 },
+            { nombre: 'Fruta', precio: 2.5 },
             { nombre: 'Tarta de queso', precio: 5.0 },
         ]
     }
 }
 
+//Las frases que tienen que aparecer al azar cada vez que se escoge un plato
 const frasesMenu = [
     "¡Muy buena elección!",
     "¡Delicioso!",
@@ -156,13 +158,33 @@ const menu = tiposMenu[horario];
 // Voy a extraer la lista de cada plato del menu elegido
 const platosDisponibles = [menu['plato1'], menu['plato2'], menu['plato3']];
 
+//Aqui guardo los platos elegidos y sumo los precios
 let platosElegidos = [];
-let precioIndividual = [];
 let precioTotal = 0;
 
 // Uso prompt de nuevo para elegir los tres platos:
 while (platosElegidos.length < 3) {
     for (let plato = 0; plato < platosDisponibles.length; plato++) {
-        let preguntaPlato = prompt(`Escriba el plato que desea del menú de ${horario}: \n\n1. ${platosDisponibles[plato][0].nombre} -> ${platosDisponibles[plato][0].precio.toFixed(2)}€\n2. ${platosDisponibles[plato][1].nombre} -> ${platosDisponibles[plato][1].precio.toFixed(2)}€\n3. ${platosDisponibles[plato][2].nombre} -> ${platosDisponibles[plato][2].precio.toFixed(2)}€\n\n`);
+        let preguntaPlato = prompt(`Escriba el plato que desea del menú de ${horario}: \n\n1. ${platosDisponibles[plato][0].nombre} -> ${platosDisponibles[plato][0].precio.toFixed(1)}€\n2. ${platosDisponibles[plato][1].nombre} -> ${platosDisponibles[plato][1].precio.toFixed(1)}€\n3. ${platosDisponibles[plato][2].nombre} -> ${platosDisponibles[plato][2].precio.toFixed(1)}€\n\n`);
+        
+        // Que sea valido aunque haya espacios y aunque haya mayusculas en cualquier parte (PENSAR: ALGUN OTRO POSIBLE ERROR? TILDES?)
+        preguntaPlato = preguntaPlato.trim();
+        preguntaPlato = preguntaPlato.toLowerCase();
+
+        //verificar que el plato elegido existe en el menu, si no existe, volver a preguntar
+        if (preguntaPlato !== null) {
+
+            const existePlato = platosDisponibles[plato].some(plato => plato.nombre.toLowerCase() === preguntaPlato);
+
+            if (existePlato) {
+                const platoElegido = platosDisponibles[plato].find(plato => plato.nombre.toLowerCase() === preguntaPlato);
+                platosElegidos.push(platoElegido);
+                precioTotal += platoElegido.precio;
+                break;
+            } else {
+                alert("Por favor, introduzca un plato disponible.");
+                continue;
+            }
+        }
     }
 }
