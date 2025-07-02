@@ -180,7 +180,6 @@ while (platosElegidos.length < 3) {
                 const platoElegido = platosDisponibles[plato].find(plato => plato.nombre.toLowerCase() === preguntaPlato);
                 platosElegidos.push(platoElegido);
                 precioTotal += platoElegido.precio;
-                break;
             } else {
                 alert("Por favor, introduzca un plato disponible.");
                 continue;
