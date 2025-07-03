@@ -231,6 +231,7 @@ const extras = [
 let platosExtras = [];
 
 // ESTA PARTE ES PARA PREGUNTAR POR LOS PLATOS EXTRAS SOLO SI NO SE HA CANCELADO EL PEDIDO
+// VOY A AÑADIR SOLO UN POSIBLE EXTRA PARA PROBAR EL USO DE CONFIRM YA QUE HE USADO PROMPT ANTES
 if (!cancelar) {
 
     const pedirPlatosExtra = confirm(`¿Desea un extra?\n\n${extras[0].nombre} -> ${extras[0].precio.toFixed(1)}€`);
@@ -254,6 +255,3 @@ if (!cancelar) {
     });
     alert(`Muchas gracias por su pedido.\nEsta es su factura.\n\n${platoPrecioFinal}\nEXTRAS: ${platosExtras[0].nombre} -> ${platosExtras[0].precio.toFixed(1)}€\n\nPRECIO TOTAL: ${precioTotal.toFixed(1)}€`);
 }
-
-// console.log(platosElegidos);
-// console.log(precioTotal);
