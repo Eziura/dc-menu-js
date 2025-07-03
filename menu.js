@@ -158,13 +158,6 @@ const tiposMenu = {
     }
 }
 
-//EXTRAS PARA CUALQUIER MENU (OPCIONAL SI VOY BIEN DE TIEMPO)
-const extras = [
-    { nombre: 'Pan', precio: 0.5 },
-    { nombre: 'Tupper para llevar', precio: 0.8 },
-    { nombre: 'Cubiertos desechables', precio: 0.2 }
-]
-
 //Las frases que tienen que aparecer al azar cada vez que se escoge un plato
 const frasesMenu = [
     "¡Muy buena elección!",
@@ -175,10 +168,8 @@ const frasesMenu = [
 ]
 
 // ESTA PARTE ES PARA MOSTRAR LOS PLATOS SEGÚN EL HORARIO SELECCIONADO
-
 //Aqui guardo los platos elegidos y sumo los precios
 let platosElegidos = [];
-let platosExtras = [];
 let precioTotal = 0;
 
 // Uso prompt de nuevo para elegir los tres platos:
@@ -232,6 +223,28 @@ while (platosElegidos.length < 3 && !cancelar) {
     }
 }
 
+//EXTRAS PARA CUALQUIER MENU (((OPCIONAL SI VOY BIEN DE TIEMPO)))
+const extras = [
+    { nombre: 'Pan', precio: 0.5 },
+]
+
+let platosExtras = [];
+
+// ESTA PARTE ES PARA PREGUNTAR POR LOS PLATOS EXTRAS SOLO SI NO SE HA CANCELADO EL PEDIDO
+if (!cancelar) {
+
+    const pedirPlatosExtra = confirm(`¿Desea un extra?\n\n${extras[0].nombre} -> ${extras[0].precio.toFixed(1)}€`);
+
+    if (pedirPlatosExtra) {
+        platosExtras.push (extras[0]);
+        precioTotal += extras[0].precio;
+    } else {
+        //Para mostrar en la factura
+        platosExtras.push({ nombre: 'Sin extras', precio: 0.0 });
+    }
+}
+
+
 // BLOQUE FINAL PARA MOSTRAR LOS PLATOS ELEGIDOS, PRECIO INDIVIDUAL Y PRECIO TOTAL
 if (!cancelar) {
     let platoPrecioFinal = '';
@@ -239,8 +252,7 @@ if (!cancelar) {
     platosElegidos.forEach(plato => {
         platoPrecioFinal += `${plato.nombre} -> ${plato.precio.toFixed(1)}€\n`;
     });
-
-    alert(`Muchas gracias por su pedido.\nEsta es su factura.\n\n${platoPrecioFinal}\n\nPRECIO TOTAL: ${precioTotal.toFixed(1)}€`);
+    alert(`Muchas gracias por su pedido.\nEsta es su factura.\n\n${platoPrecioFinal}\nEXTRAS: ${platosExtras[0].nombre} -> ${platosExtras[0].precio.toFixed(1)}€\n\nPRECIO TOTAL: ${precioTotal.toFixed(1)}€`);
 }
 
 // console.log(platosElegidos);
