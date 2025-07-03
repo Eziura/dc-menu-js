@@ -1,18 +1,34 @@
+// Funcion preparada para cuando quiera cancelar en cualquier punto
+function cancelarPedido(mensajeCancelar = '¿Seguro que desea cancelar el pedido?') {
+    const cancelar = confirm(mensajeCancelar);
+    if (cancelar) {
+        alert("El pedido ha sido cancelado.");
+        return true;
+    }
+    return false;
+}
+// Variable global para cancelar o no los pedidos en cualquier punto del código
+let cancelar = false;
 
 // ESTA PARTE ES PARA PREGUNTAR POR EL HORARIO AL CLIENTE
-
 // La variable para almacenar el horario
 let horario = undefined;
 const horarioInvalido = "Por favor, introduzca un horario con la hora y los minutos en formato HH:MM.";
+
 // Un bucle while para preguntar el horario hasta que se introduzca un horario correcto (Y si cancela qué hago? mirar cómo funciona)
 // Mientras horario siga siendo undefined se pasa el prompt
-while (horario === undefined) {
+while (horario === undefined && !cancelar) {
     let preguntaHorario = prompt("Escriba la hora del servicio: \n\n1. Desayuno: 8:00 - 10:00\n2. Comida: 12:00 - 15:00\n3. Cena: 20:00 - 23:00\n\n");
 
     // El usuario puede no meter nada, o puede meter algo incorrecto, primero veo si hay algún fallo antes de seguir
     // Si le da a cancelar apareceria como null, le voy a poner break para que corte el bucle
     if (preguntaHorario === null) {
-        break;
+        if (cancelarPedido()) {
+            cancelar = true;
+            break;
+        } else {
+            continue;
+        }
     } else if (preguntaHorario === '') {
         alert("Por favor, introduzca un horario.");
         continue;
@@ -75,6 +91,7 @@ while (horario === undefined) {
             } else {
                 horario = 'cena';
             }
+
         } else {
             alert("Por favor, introduzca una hora dentro del horario de desayuno, comida o cena en formato HH:MM.");
             continue;
@@ -121,7 +138,7 @@ const tiposMenu = {
             { nombre: 'Tarta de queso', precio: 4.9 },
         ]
     },
-    //Cena igual que comida pero precios más altos
+    //Cena igual que comida pero precios más altos (lo pide en el enunciado)
     'cena': {
         'plato1': [
             { nombre: 'Croquetas', precio: 9.0 },
@@ -141,6 +158,13 @@ const tiposMenu = {
     }
 }
 
+//EXTRAS PARA CUALQUIER MENU (OPCIONAL SI VOY BIEN DE TIEMPO)
+const extras = [
+    { nombre: 'Pan', precio: 0.5 },
+    { nombre: 'Tupper para llevar', precio: 0.8 },
+    { nombre: 'Cubiertos desechables', precio: 0.2 }
+]
+
 //Las frases que tienen que aparecer al azar cada vez que se escoge un plato
 const frasesMenu = [
     "¡Muy buena elección!",
@@ -152,22 +176,20 @@ const frasesMenu = [
 
 // ESTA PARTE ES PARA MOSTRAR LOS PLATOS SEGÚN EL HORARIO SELECCIONADO
 
-// Voy a entrar dentro del menu del horario seleccionado para mostrar los platos y pedir que seleccione uno de cada
-const menu = tiposMenu[horario];
-
-// Voy a extraer la lista de cada plato del menu elegido
-const platosDisponibles = [menu['plato1'], menu['plato2'], menu['plato3']];
-
 //Aqui guardo los platos elegidos y sumo los precios
 let platosElegidos = [];
+let platosExtras = [];
 let precioTotal = 0;
-
-//voy a añadiur una variable de cancelar pedido para salir del while si se cancela
-let cancelarPedido = false;
 
 // Uso prompt de nuevo para elegir los tres platos:
 // Este while sigue activo hasta que se elijan los 3 platos o cancelarPedido sea true
-while (platosElegidos.length < 3 && !cancelarPedido) {
+while (platosElegidos.length < 3 && !cancelar) {
+    // Primero voy a entrar dentro del menu del horario seleccionado para mostrar los platos y pedir que seleccione uno de cada
+    const menu = tiposMenu[horario];
+
+    // Voy a extraer la lista de cada plato del menu elegido usando las keys platoX
+    const platosDisponibles = [menu['plato1'], menu['plato2'], menu['plato3']];
+
     for (let plato = 0; plato < platosDisponibles.length; plato++) {
         let preguntaPlato = prompt(`Escriba el plato que desea del menú de ${horario}: \n\n1. ${platosDisponibles[plato][0].nombre} -> ${platosDisponibles[plato][0].precio.toFixed(1)}€\n2. ${platosDisponibles[plato][1].nombre} -> ${platosDisponibles[plato][1].precio.toFixed(1)}€\n3. ${platosDisponibles[plato][2].nombre} -> ${platosDisponibles[plato][2].precio.toFixed(1)}€\n\n`);
 
@@ -194,14 +216,11 @@ while (platosElegidos.length < 3 && !cancelarPedido) {
                 continue;
             }
         } else {
-            // Si el usuario cancela, le pregunto a ver si lo quiere cancelar de verdad por si acaso se ha equivocado
-            const cancelar = confirm("¿Seguro que desea cancelar el pedido?");
-            if (cancelar) {
-                // le digo que ha sido cancelado y borro lo que había guardado si había elegido algo (por si acaso)
-                alert("El pedido ha sido cancelado.");
+            // otra vez uso la funcion de cancelar pedido
+            if (cancelarPedido()) {
+                cancelar = true;
                 platosElegidos = [];
                 precioTotal = 0;
-                cancelarPedido = true; //aquí añado true y esto rompe el while y sale
                 break;
 
             } else {
@@ -211,6 +230,17 @@ while (platosElegidos.length < 3 && !cancelarPedido) {
 
         }
     }
+}
+
+// BLOQUE FINAL PARA MOSTRAR LOS PLATOS ELEGIDOS, PRECIO INDIVIDUAL Y PRECIO TOTAL
+if (!cancelar) {
+    let platoPrecioFinal = '';
+
+    platosElegidos.forEach(plato => {
+        platoPrecioFinal += `${plato.nombre} -> ${plato.precio.toFixed(1)}€\n`;
+    });
+
+    alert(`Muchas gracias por su pedido.\nEsta es su factura.\n\n${platoPrecioFinal}\n\nPRECIO TOTAL: ${precioTotal.toFixed(1)}€`);
 }
 
 // console.log(platosElegidos);
